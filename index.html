@@ -8,6 +8,10 @@
   <meta name="description" content="The HTML5 Herald">
   <meta name="author" content="SitePoint">
 
+  <style>
+    
+  </style>
+
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -16,27 +20,53 @@
 
 <body>
     <div class="jumbotron">
-        <h1 class="display-4">Hello, world!</h1>
-        <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+        <h1 class="display-4">Operationalized Malicious URL Classifier using ML</h1>
+        <p class="lead">This project is my attempt to understand how machine learning can be applied to cybersecurity at an enterprise scale. </p>
         <hr class="my-4">
-        <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-        <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+        <p>Many examples of machine learning I've found only attempt to solve the easiest case and are only capable of validating their own accuracy on dataset. The phrase "just run all the logs through ML" is thrown around, but it doesn't mean anything. It is too general, and it ignores all of the other stages of managing, filtering, and correlating logs. I believe ML will be deployed to solve specific cases.
+        </p>
+        <p>
+          This project will classify a URL as malicious or non-malicious based on the data gathered. It has 2 models, only TLD, and Full URL. It will then return data from the model with the highest confidence.
+        </p>
+        <a class="btn btn-primary btn-lg" href="https://www.linkedin.com/in/apbeers/" target="_blank" role="button">Read more about the project on LinkedIn</a>
       </div>
 
-      <div class="input-group mb-3">
-        <div class="input-group-prepend">
-          <button class="btn btn-outline-secondary" type="button" id="button-addon1">Button</button>
+      <div class="container">
+        
+        <div class="form-group .px-2">
+          <label for="exampleFormControlInput1">Potentialy malicious URL</label>
+          <input type="email" class="form-control" id="url_to_test" placeholder="www.newmusic.com/acdc/songs/thunderstruck.mp3.exe">
         </div>
-        <input type="text" id="url_to_test" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-      </div>
+  
+        <div class="form-group">
+          <label for="exampleFormControlInput1">IP Address associated with URL (leave this blank and the server will ping the url to get an IP address)</label>
+          <input type="email" class="form-control" id="ip_for_url" placeholder="52.43.67.5">
+        </div>
+  
+        <div class="form-group">
+          <label for="exampleFormControlTextarea1">White listed IPs (1 per line)</label>
+          <textarea class="form-control" id="white_listed_ips" rows="3"></textarea>
+        </div>
+  
+        <div class="form-group">
+          <label for="exampleFormControlTextarea1">Black Listed IPs (1 per line)</label>
+          <textarea class="form-control" id="black_listed_ips" rows="3"></textarea>
+        </div>
+  
+        <button type="button" class="btn btn-primary btn-lg">Submit</button>
 
+      </div>
+      
       <script>
          $(document).ready(function(){
             $("button").click(function(){
                 $.ajax({
                     type: "POST",
                     url: "https://fathomless-thicket-49759.herokuapp.com/api",
-                    data: JSON.stringify({'url':document.getElementById('url_to_test').value}),
+                    data: JSON.stringify({'url':document.getElementById('url_to_test').value,
+                                          'white_listed_ips':document.getElementById('white_listed_ips').value,
+                                          'black_listed_ips':document.getElementById('black_listed_ips').value,
+                                          'ip_for_url':document.getElementById('ip_for_url').value}),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function(data){alert(data);},
@@ -48,4 +78,5 @@
         });
       </script>
 </body>
+
 </html>
