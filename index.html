@@ -21,7 +21,7 @@
 <body>
     <div class="jumbotron">
         <h1 class="display-4">Operationalized Malicious URL Classifier using ML</h1>
-        <p class="lead">This project is my attempt to understand how machine learning can be applied to cybersecurity at an enterprise scale. </p>
+        <p class="lead">This project is my attempt to understand how machine learning can be applied to cybersecurity in an operational way. </p>
         <hr class="my-4">
         <p>Many examples of machine learning I've found only attempt to solve the easiest case and are only capable of validating their own accuracy on dataset. The phrase "just run all the logs through ML" is thrown around, but it doesn't mean anything. It is too general, and it ignores all of the other stages of managing, filtering, and correlating logs. I believe ML will be deployed to solve specific cases.
         </p>
@@ -38,20 +38,33 @@
           <input type="email" class="form-control" id="url_to_test" placeholder="www.newmusic.com/acdc/songs/thunderstruck.mp3.exe">
         </div>
   
-        <div class="form-group">
-          <label for="exampleFormControlInput1">IP Address associated with URL (leave this blank and the server will ping the url to get an IP address)</label>
-          <input type="email" class="form-control" id="ip_for_url" placeholder="52.43.67.5">
+        <!-- Modal -->
+      <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p id="model">
+                Hello world
+              </p>
+              <p id="accuracy">
+                Hello world
+              </p>
+              <p id="prediction">
+                Hello world
+              </p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
         </div>
-  
-        <div class="form-group">
-          <label for="exampleFormControlTextarea1">White listed IPs (1 per line)</label>
-          <textarea class="form-control" id="white_listed_ips" rows="3"></textarea>
-        </div>
-  
-        <div class="form-group">
-          <label for="exampleFormControlTextarea1">Black Listed IPs (1 per line)</label>
-          <textarea class="form-control" id="black_listed_ips" rows="3"></textarea>
-        </div>
+      </div>
   
         <button type="button" class="btn btn-primary btn-lg">Submit</button>
 
@@ -63,13 +76,23 @@
                 $.ajax({
                     type: "POST",
                     url: "https://fathomless-thicket-49759.herokuapp.com/api",
-                    data: JSON.stringify({'url':document.getElementById('url_to_test').value,
-                                          'white_listed_ips':document.getElementById('white_listed_ips').value,
-                                          'black_listed_ips':document.getElementById('black_listed_ips').value,
-                                          'ip_for_url':document.getElementById('ip_for_url').value}),
+                    data: JSON.stringify({'url':document.getElementById('url_to_test').value}),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
-                    success: function(data){alert(data);},
+                    success: function(data){
+                        var obj = JSON.parse(data)
+
+                        if (obj.prediction == "False") {
+                          document.getElementById('exampleModalLongTitle').innerHTML = "Not Malicious"
+                        } else if (obj.prediction == "True") {
+                          document.getElementById('exampleModalLongTitle').innerHTML = "Malicious"
+                        }
+
+                        document.getElementById('model').innerHTML = "Model: " + obj.model
+                        document.getElementById('accuracy').innerHTML = "Confidence: " + obj.accuracy
+                        document.getElementById('prediction').innerHTML = "Malicious: " + obj.prediction
+                        $('#exampleModalCenter').modal(show=true)
+                      },
                     failure: function(errMsg) {
                         alert(errMsg);
                     }
